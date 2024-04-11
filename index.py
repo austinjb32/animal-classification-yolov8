@@ -42,7 +42,7 @@ def video_frame_callback(frame):
                 pygame.mixer.init()
                 pygame.mixer.music.load(sound_file)
                 pygame.mixer.music.play()
-                pygame.time.wait(300)
+                pygame.time.wait(400)
                 pygame.mixer.music.stop()
 
         flipped = img[::-1,:,:] if flip else img
@@ -52,5 +52,5 @@ def video_frame_callback(frame):
 
 webrtc_streamer(key="example", video_frame_callback=video_frame_callback)
 
-method = st.sidebar.radio('Go To ->', options=['Webcam', 'Image'])
+method = st.radio('Source', options=['Webcam', 'Video'])
 
