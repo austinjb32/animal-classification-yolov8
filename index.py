@@ -10,21 +10,17 @@ from inference.models.utils import get_roboflow_model
 import pygame
 from streamlit.runtime.scriptrunner import get_script_run_ctx, add_script_run_ctx
 from threading import Thread
+from mail import send_email
 
-logger_box = st.empty()
-
-# Function to add a new item to the database and update the logger box
-def add_to_database(item):
-    logger_box.text(f"A {item} Found! ")
 
 
 check_data=[]
 
-    
 
 
 
-def play_sound(sound_file, class_name):
+
+def play_sound(sound_file, class_name,frame):
     pygame.mixer.init()
     pygame.mixer.music.load(sound_file)
     pygame.mixer.music.play()
@@ -34,13 +30,13 @@ def play_sound(sound_file, class_name):
     })
     
     if(check_data[-1]["time"] - check_data[0]["time"] >= 10):
-        print(check_data[0]["class_name"])
+        send_email(frame, "Wildlife Detected", f"A {check_data[0]['class_name']} has been detected in the area")
         check_data.clear()
     pygame.time.wait(1000)
     pygame.mixer.music.stop()
 
-def play_sound_thread(sound_file,class_name):
-    thread_one = Thread(target=play_sound, args=(sound_file,class_name,))
+def play_sound_thread(sound_file,class_name,frame):
+    thread_one = Thread(target=play_sound, args=(sound_file,class_name,frame))
     add_script_run_ctx(thread_one,class_name)
     thread_one.start()
 
@@ -76,7 +72,7 @@ def video_frame_callback(frame):
         if detected_class_id is not None:
             sound_file = sound_files.get(detected_class_id)
             if sound_file is not None:
-                play_sound_thread(sound_file,names[detected_class_id])
+                play_sound_thread(sound_file,names[detected_class_id],frame=img)
             
 
         flipped = img[::-1,:,:] if flip else img
