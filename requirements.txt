@@ -81,7 +81,7 @@ numpy==1.25.2
 oauthlib==3.2.2
 onnxruntime==1.15.1
 openai==1.17.1
-opencv-python-headless==4.6.0.66
+opencv-python-headless== 4.5.5.64
 packaging==24.0
 pandas==2.2.2
 pendulum==3.0.0
