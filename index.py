@@ -62,6 +62,10 @@ st.subheader('Video Upload and Display')
 
 start_button = st.button("Start Video")
 
+animal_detected = False
+
+st.toast("Welcome to Wildlife Detection App")
+
 flip = st.checkbox("Flip Camera")
 def video_frame_callback(frame):
         img = frame.to_ndarray(format="bgr24")
@@ -69,16 +73,22 @@ def video_frame_callback(frame):
         img, detected_class_id = callback(img, 0, model, tracker, box_annotator, label_annotator, trace_annotator, names, sound_files, animal_log)
 
         if detected_class_id is not None:
+            animal_detected = False
             sound_file = sound_files.get(detected_class_id)
             if sound_file is not None:
                 play_sound_thread(sound_file,names[detected_class_id],frame=img)
-            
+
 
         flipped = img[::-1,:,:] if flip else img
 
         return av.VideoFrame.from_ndarray(flipped, format="bgr24")
-   
+
+if animal_detected:
+    st.toast("Animal Detected")
+    # Reset the global variable
+    animal_detected = False
 
 webrtc_streamer(key="example", video_frame_callback=video_frame_callback)
+
 
 
