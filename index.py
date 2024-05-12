@@ -19,18 +19,25 @@ check_data=[]
 
 
 
-def play_sound(sound_file, class_name,frame):
+last_email_time = 0
+
+def play_sound(sound_file, class_name, frame):
+    global last_email_time
+    
     pygame.mixer.init()
     pygame.mixer.music.load(sound_file)
     pygame.mixer.music.play()
+    
     check_data.append({
         "time": time.time(),
         "class_name": class_name
     })
     
-    if(check_data[-1]["time"] - check_data[0]["time"] >= 10):
-        send_email(frame, "Wildlife Detected", f"A {check_data[0]['class_name']} has been detected in the area")
+    if time.time() - last_email_time >= 60:
+        send_email_thread(frame, class_name)
         check_data.clear()
+        last_email_time = time.time()
+    
     pygame.time.wait(1000)
     pygame.mixer.music.stop()
 
@@ -39,11 +46,19 @@ def play_sound_thread(sound_file,class_name,frame):
     add_script_run_ctx(thread_one,class_name)
     thread_one.start()
 
+def send_email_thread(frame,subject):
+    time.sleep(1)  # Add a delay of 10 seconds
+    thread_two = Thread(target=send_email, args=(frame, subject))
+    add_script_run_ctx(thread_two,subject)
+    thread_two.start()
+
 sound_files = {
     1: 'Gunshot.mp3',
     0: 'Bees.mp3',
  
 }
+
+
 
 model = get_roboflow_model(model_id="animal-classification-tima/5", api_key="69m1zkCJhpHpTvN4WOIV")
 tracker = sv.ByteTrack()
@@ -73,7 +88,6 @@ def video_frame_callback(frame):
         img, detected_class_id = callback(img, 0, model, tracker, box_annotator, label_annotator, trace_annotator, names, sound_files, animal_log)
 
         if detected_class_id is not None:
-            animal_detected = False
             sound_file = sound_files.get(detected_class_id)
             if sound_file is not None:
                 play_sound_thread(sound_file,names[detected_class_id],frame=img)
