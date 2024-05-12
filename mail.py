@@ -49,8 +49,8 @@ def send_email(frame, subject):
 
       mail = mt.MailFromTemplate(
       sender=mt.Address(email="mailtrap@demomailtrap.com", name="Mailtrap Test"),
-      to=[mt.Address(email="austin.j@hubspire.com")],
-      template_uuid="29dfe603-e2c8-45c7-b4a7-a0b05c9ff22e",
+      to=[mt.Address(email="naveenmoncy05@gmail.com")],
+      template_uuid="a0810aad-9a0c-46df-84d7-a5d37a3574b7",
       template_variables={
             "animal": subject,
       },
@@ -64,5 +64,5 @@ def send_email(frame, subject):
             )
       ],
       )
-      client = mt.MailtrapClient(token="3533606e5d83e83664910a20b9bfdfc9")
+      client = mt.MailtrapClient(token="f2efe3399bcb4feab576aedebb8c657c")
       client.send(mail)
