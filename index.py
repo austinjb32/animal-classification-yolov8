@@ -33,10 +33,9 @@ def play_sound(sound_file, class_name, frame):
         "class_name": class_name
     })
     
-    if time.time() - last_email_time >= 60:
+    if last_email_time-  time.time() <= 0:
         send_email_thread(frame, class_name)
-        check_data.clear()
-        last_email_time = time.time()
+        last_email_time = time.time()+ 30*60
     
     pygame.time.wait(1000)
     pygame.mixer.music.stop()
